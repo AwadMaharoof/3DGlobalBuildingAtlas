@@ -51,12 +51,20 @@ function calculateRingArea(coordinates: Position[]): number {
  */
 export function calculatePolygonArea(geometry: Polygon | MultiPolygon): number {
   if (geometry.type === 'Polygon') {
-    // Use only exterior ring (index 0), ignore holes
-    return calculateRingArea(geometry.coordinates[0]);
+    // Exterior ring area minus hole areas
+    let area = calculateRingArea(geometry.coordinates[0]);
+    for (let i = 1; i < geometry.coordinates.length; i++) {
+      area -= calculateRingArea(geometry.coordinates[i]);
+    }
+    return area;
   } else if (geometry.type === 'MultiPolygon') {
-    // Sum all polygon areas
+    // Sum all polygon areas (each with holes subtracted)
     return geometry.coordinates.reduce((total, polygon) => {
-      return total + calculateRingArea(polygon[0]);
+      let area = calculateRingArea(polygon[0]);
+      for (let i = 1; i < polygon.length; i++) {
+        area -= calculateRingArea(polygon[i]);
+      }
+      return total + area;
     }, 0);
   }
   return 0;
