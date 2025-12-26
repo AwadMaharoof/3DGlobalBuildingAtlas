@@ -2,6 +2,8 @@
 
 An interactive 3D viewer for the [GlobalBuildingAtlas](https://github.com/zhu-xlab/GlobalBuildingAtlas) dataset from TUM with a few additional features.
 
+## [Live Demo](https://AwadMaharoof.github.io/3DGlobalBuildingAtlas/)
+
 ![3D Building View](assets/demo.gif)
 
 ## Quick Start
