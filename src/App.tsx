@@ -10,8 +10,11 @@ import { BuildingPopup } from './components/BuildingPopup';
 import { Legend } from './components/Legend/Legend';
 import { ZoomIndicator } from './components/ZoomIndicator/ZoomIndicator';
 import { BuildingStats } from './components/BuildingStats/BuildingStats';
+import { LayerPanel } from './components/LayerPanel/LayerPanel';
 import { useWFSData } from './hooks/useWFSData';
 import type { BBox, BuildingFeature } from './types/building';
+import type { BasemapStyle } from './types/layerControls';
+import { BASEMAP_STYLES } from './types/layerControls';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './App.css';
 
@@ -23,7 +26,6 @@ const INITIAL_VIEW_STATE = {
   bearing: 0
 };
 
-const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 const WFS_LAYER = 'global3D:lod1_global';
 const ZOOM_THRESHOLD = 13;
 
@@ -37,6 +39,12 @@ function App() {
   const [bbox, setBbox] = useState<BBox | undefined>(undefined);
   const [zoom, setZoom] = useState(INITIAL_VIEW_STATE.zoom);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+
+  // Layer control state
+  const [wireframeMode, setWireframeMode] = useState(false);
+  const [buildingOpacity, setBuildingOpacity] = useState(100);
+  const [heightRange, setHeightRange] = useState<[number, number]>([0, 100]);
+  const [basemapStyle, setBasemapStyle] = useState<BasemapStyle>('light');
 
   const updateViewState = useCallback((map: MapLibreMap) => {
     const bounds = map.getBounds();
@@ -82,20 +90,33 @@ function App() {
     enabled: showBuildings
   });
 
+  // Calculate filtered count for display
+  const filteredCount = useMemo(() => {
+    if (!data) return 0;
+    return data.features.filter(f => {
+      const h = f.properties.height ?? 0;
+      return h >= heightRange[0] && h <= heightRange[1];
+    }).length;
+  }, [data, heightRange]);
+
   const layers = useMemo(() => {
-    if (showBuildings) {
-      const layer = createBuildingLayer(data);
-      return layer ? [layer] : [];
-    } else {
+    if (!showBuildings) {
       return [createVolumeLayer()];
     }
-  }, [data, showBuildings]);
+    const layer = createBuildingLayer(data, {
+      wireframeMode,
+      opacity: buildingOpacity / 100,
+      heightRange,
+      darkMode: basemapStyle === 'dark'
+    });
+    return layer ? [layer] : [];
+  }, [data, showBuildings, wireframeMode, buildingOpacity, heightRange, basemapStyle]);
 
   return (
     <div id="map-container">
       <Map
         initialViewState={INITIAL_VIEW_STATE}
-        mapStyle={MAP_STYLE}
+        mapStyle={BASEMAP_STYLES[basemapStyle]}
         onLoad={handleLoad}
         onMoveEnd={handleMoveEnd}
       >
@@ -118,6 +139,22 @@ function App() {
         buildingCount={data?.features.length}
         error={error}
       />
+
+      {showBuildings && (
+        <LayerPanel
+          wireframeMode={wireframeMode}
+          onWireframeModeChange={setWireframeMode}
+          opacity={buildingOpacity}
+          onOpacityChange={setBuildingOpacity}
+          heightRange={heightRange}
+          onHeightRangeChange={setHeightRange}
+          basemap={basemapStyle}
+          onBasemapChange={setBasemapStyle}
+          filteredCount={filteredCount}
+          totalCount={data?.features.length ?? 0}
+        />
+      )}
+
       {showBuildings && <Legend />}
       {showBuildings && <BuildingStats data={data} loading={loading} />}
     </div>
