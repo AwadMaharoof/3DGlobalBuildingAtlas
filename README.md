@@ -6,6 +6,14 @@ An interactive 3D viewer for the [GlobalBuildingAtlas](https://github.com/zhu-xl
 
 ![3D Building View](assets/demo.gif)
 
+## Key Features
+
+- **Multiple Color Modes** - Visualize by height, uncertainty, polygon source (OSM/Google/Microsoft), or footprint area
+- **Height Filtering** - Filter buildings by height range with real-time statistics and distribution histogram
+- **Building Info Popup** - Hover to see height, source, uncertainty, and other properties
+- **Light/Dark Themes** - Toggle between light and dark basemap styles
+- **Smart Data Loading** - Efficient bounding-box queries with caching and debouncing
+
 ## Quick Start
 
 ```bash

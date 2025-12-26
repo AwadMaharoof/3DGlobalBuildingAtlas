@@ -37,7 +37,7 @@ interface HoverInfo {
   y: number;
 }
 
-const HOVER_DELAY_MS = 250;
+const HOVER_DELAY_MS = 500;
 
 function App() {
   const mapRef = useRef<MapRef>(null);
