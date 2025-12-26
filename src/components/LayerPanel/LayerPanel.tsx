@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Toggle } from '../ui/Toggle/Toggle';
 import { Slider } from '../ui/Slider/Slider';
 import { RangeSlider } from '../ui/RangeSlider/RangeSlider';
-import type { BasemapStyle } from '../../types/layerControls';
+import type { BasemapStyle, ColorMode } from '../../types/layerControls';
+import { COLOR_MODE_LABELS, COLOR_MODE_DESCRIPTIONS } from '../../types/layerControls';
 import './LayerPanel.css';
 
 interface LayerPanelProps {
@@ -17,7 +18,11 @@ interface LayerPanelProps {
   filteredCount: number;
   totalCount: number;
   onResetView: () => void;
+  colorMode: ColorMode;
+  onColorModeChange: (mode: ColorMode) => void;
 }
+
+const COLOR_MODES: ColorMode[] = ['height', 'variance', 'source', 'area'];
 
 export function LayerPanel({
   wireframeMode,
@@ -30,7 +35,9 @@ export function LayerPanel({
   onBasemapChange,
   filteredCount,
   totalCount,
-  onResetView
+  onResetView,
+  colorMode,
+  onColorModeChange
 }: LayerPanelProps) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -65,6 +72,22 @@ export function LayerPanel({
             <path d="M18 15L12 9L6 15" />
           </svg>
         </button>
+      </div>
+
+      <div className="layer-panel-section">
+        <div className="layer-panel-section-label">Color By</div>
+        <div className="color-mode-buttons">
+          {COLOR_MODES.map((mode) => (
+            <button
+              key={mode}
+              className={`color-mode-btn ${colorMode === mode ? 'color-mode-btn-active' : ''}`}
+              onClick={() => onColorModeChange(mode)}
+              title={COLOR_MODE_DESCRIPTIONS[mode]}
+            >
+              {COLOR_MODE_LABELS[mode]}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="layer-panel-section">

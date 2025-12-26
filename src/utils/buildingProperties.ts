@@ -2,9 +2,9 @@ export const PROPERTY_LABELS: Record<string, string> = {
   ogc_fid: 'Feature ID',
   id: 'Building ID',
   height: 'Height',
-  source: 'Data Source',
+  source: 'Polygon Source',
   region: 'Region',
-  variance: 'Height Variance',
+  var: 'Height Uncertainty',
 };
 
 export function formatPropertyValue(key: string, value: unknown): string {
@@ -12,7 +12,7 @@ export function formatPropertyValue(key: string, value: unknown): string {
     return 'N/A';
   }
 
-  if (key === 'height' || key === 'variance') {
+  if (key === 'height' || key === 'var') {
     return `${Number(value).toFixed(1)} m`;
   }
 

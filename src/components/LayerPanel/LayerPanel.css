@@ -124,6 +124,40 @@
   border-color: rgb(39, 84, 122);
 }
 
+.color-mode-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.color-mode-btn {
+  padding: 6px 8px;
+  border: 1px solid var(--widget-border-dark);
+  background: var(--widget-bg-secondary);
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: var(--widget-text-secondary);
+  text-align: center;
+}
+
+.color-mode-btn:hover {
+  background: var(--widget-border);
+  border-color: var(--widget-border-dark);
+}
+
+.color-mode-btn-active {
+  background: rgb(49, 104, 142);
+  border-color: rgb(49, 104, 142);
+  color: white;
+}
+
+.color-mode-btn-active:hover {
+  background: rgb(39, 84, 122);
+  border-color: rgb(39, 84, 122);
+}
+
 /* UI component overrides using CSS variables */
 .layer-panel .toggle-label {
   color: var(--widget-text);

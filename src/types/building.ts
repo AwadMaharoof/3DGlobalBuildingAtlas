@@ -6,7 +6,7 @@ export interface BuildingProperties {
   height: number;
   source?: string;
   region?: string;
-  variance?: number;
+  var?: number; // Height variance from WFS
 }
 
 export type BuildingFeature = Feature<Polygon | MultiPolygon, BuildingProperties>;

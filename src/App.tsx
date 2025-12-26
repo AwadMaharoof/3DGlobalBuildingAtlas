@@ -15,7 +15,7 @@ import { LayerPanel } from './components/LayerPanel/LayerPanel';
 import { useWFSData } from './hooks/useWFSData';
 import { countBuildingsInHeightRange } from './utils/filterBuildings';
 import type { BBox, BuildingFeature } from './types/building';
-import type { BasemapStyle } from './types/layerControls';
+import type { BasemapStyle, ColorMode } from './types/layerControls';
 import { BASEMAP_STYLES } from './types/layerControls';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './App.css';
@@ -61,6 +61,7 @@ function App() {
   const [buildingOpacity, setBuildingOpacity] = useState(100);
   const [heightRange, setHeightRange] = useState<[number, number]>([0, 100]);
   const [basemapStyle, setBasemapStyle] = useState<BasemapStyle>('light');
+  const [colorMode, setColorMode] = useState<ColorMode>('height');
 
   const updateViewState = useCallback((map: MapLibreMap) => {
     const bounds = map.getBounds();
@@ -134,10 +135,11 @@ function App() {
       wireframeMode,
       opacity: buildingOpacity / 100,
       heightRange,
-      darkMode: basemapStyle === 'dark'
+      darkMode: basemapStyle === 'dark',
+      colorMode
     });
     return layer ? [layer] : [];
-  }, [data, showBuildings, wireframeMode, buildingOpacity, heightRange, basemapStyle]);
+  }, [data, showBuildings, wireframeMode, buildingOpacity, heightRange, basemapStyle, colorMode]);
 
   return (
     <div id="map-container" className={basemapStyle === 'dark' ? 'dark-theme' : ''}>
@@ -180,10 +182,12 @@ function App() {
           filteredCount={filteredCount}
           totalCount={data?.features.length ?? 0}
           onResetView={handleResetView}
+          colorMode={colorMode}
+          onColorModeChange={setColorMode}
         />
       )}
 
-      {showBuildings && <Legend />}
+      {showBuildings && <Legend colorMode={colorMode} />}
       {showBuildings && <BuildingStats data={data} loading={loading} />}
 
       <a

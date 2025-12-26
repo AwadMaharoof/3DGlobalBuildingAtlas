@@ -60,3 +60,47 @@
   border-radius: 3px;
   border: 1px solid var(--widget-border-dark);
 }
+
+.legend-subtitle {
+  font-size: 10px;
+  color: var(--widget-text-muted);
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+.legend-categorical {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.legend-category-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-category-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid var(--widget-border-dark);
+  flex-shrink: 0;
+}
+
+.legend-category-label {
+  font-size: 11px;
+  color: var(--widget-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legend-empty {
+  font-size: 11px;
+  color: var(--widget-text-muted);
+  font-style: italic;
+}

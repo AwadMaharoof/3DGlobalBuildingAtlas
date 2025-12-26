@@ -1,6 +1,13 @@
 import { GeoJsonLayer } from '@deck.gl/layers';
 import type { BuildingCollection, BuildingFeature } from '../../types/building';
-import { getColorForHeight } from '../../utils/colorScale';
+import type { ColorMode } from '../../types/layerControls';
+import {
+  getColorForHeight,
+  getColorForVariance,
+  getColorForSource,
+  getColorForArea,
+} from '../../utils/colorScale';
+import { getCachedArea } from '../../utils/areaCalculation';
 import { filterBuildingsByHeight } from '../../utils/filterBuildings';
 
 const DEFAULT_HEIGHT = 10;
@@ -10,6 +17,24 @@ export interface BuildingLayerOptions {
   opacity?: number; // 0-1
   heightRange?: [number, number];
   darkMode?: boolean;
+  colorMode?: ColorMode;
+}
+
+type ColorGetter = (feature: BuildingFeature) => [number, number, number, number];
+
+function getColorGetter(colorMode: ColorMode): ColorGetter {
+  switch (colorMode) {
+    case 'height':
+      return (feature) => getColorForHeight(feature.properties.height);
+    case 'variance':
+      return (feature) => getColorForVariance(feature.properties.var);
+    case 'source':
+      return (feature) => getColorForSource(feature.properties.source);
+    case 'area':
+      return (feature) => getColorForArea(getCachedArea(feature.geometry));
+    default:
+      return (feature) => getColorForHeight(feature.properties.height);
+  }
 }
 
 export function createBuildingLayer(
@@ -23,7 +48,8 @@ export function createBuildingLayer(
     wireframeMode = false,
     opacity = 1,
     heightRange = [0, Infinity],
-    darkMode = false
+    darkMode = false,
+    colorMode = 'height'
   } = options;
 
   // Wireframe color: black for light mode, white for dark mode
@@ -34,6 +60,9 @@ export function createBuildingLayer(
   // Client-side height filtering using shared utility
   const filteredData = filterBuildingsByHeight(data, heightRange);
 
+  // Get color function based on current mode
+  const colorGetter = getColorGetter(colorMode);
+
   return new GeoJsonLayer({
     id,
     data: filteredData,
@@ -43,10 +72,10 @@ export function createBuildingLayer(
     getElevation: (feature) =>
       (feature as BuildingFeature).properties.height ?? DEFAULT_HEIGHT,
 
-    // Fill color - Viridis scale based on height (disabled in wireframe mode)
+    // Fill color based on selected color mode (disabled in wireframe mode)
     filled: !wireframeMode,
     getFillColor: (feature) => {
-      const color = getColorForHeight((feature as BuildingFeature).properties.height);
+      const color = colorGetter(feature as BuildingFeature);
       return [color[0], color[1], color[2], Math.round(color[3] * opacity)] as [number, number, number, number];
     },
 
@@ -70,7 +99,7 @@ export function createBuildingLayer(
 
     // Enable color transitions
     updateTriggers: {
-      getFillColor: [filteredData, opacity, wireframeMode],
+      getFillColor: [filteredData, opacity, wireframeMode, colorMode],
       getLineColor: [opacity, darkMode]
     }
   });
