@@ -1,6 +1,6 @@
 # 3DGlobalBuildingAtlas
 
-An interactive 3D viewer for the [GlobalBuildingAtlas](https://github.com/zhu-xlab/GlobalBuildingAtlas) dataset from TUM. Unlike the official viewer, this one supports full 3D navigation with pan, tilt, and rotation.
+An interactive 3D viewer for the [GlobalBuildingAtlas](https://github.com/zhu-xlab/GlobalBuildingAtlas) dataset from TUM with a few additional features.
 
 ![3D Building View](assets/demo.gif)
 

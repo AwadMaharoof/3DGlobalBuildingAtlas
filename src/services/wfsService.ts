@@ -13,7 +13,7 @@ export function buildWFSUrl(params: WFSParams): string {
   const {
     typeName,
     bbox,
-    maxFeatures = 10000,
+    maxFeatures,
     srsName = 'EPSG:4326'
   } = params;
 
@@ -23,9 +23,12 @@ export function buildWFSUrl(params: WFSParams): string {
     request: 'GetFeature',
     typeName: typeName,
     outputFormat: 'application/json',
-    srsName: srsName,
-    count: maxFeatures.toString()
+    srsName: srsName
   });
+
+  if (maxFeatures !== undefined) {
+    urlParams.append('count', maxFeatures.toString());
+  }
 
   if (bbox) {
     urlParams.append('bbox', `${bbox.join(',')},${srsName}`);

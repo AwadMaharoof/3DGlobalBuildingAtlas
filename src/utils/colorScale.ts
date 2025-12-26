@@ -63,4 +63,24 @@ export function getColorForHeight(height: number | null | undefined): RGBA {
   return [r, g, b, alpha];
 }
 
+// Generate CSS gradient string for legend
+export function getViridisGradientCSS(): string {
+  const stops = VIRIDIS_COLORS.map((color, index) => {
+    const percent = (index / (VIRIDIS_COLORS.length - 1)) * 100;
+    return `rgb(${color[0]}, ${color[1]}, ${color[2]}) ${percent.toFixed(1)}%`;
+  });
+  return `linear-gradient(to top, ${stops.join(', ')})`;
+}
+
+// Get CSS color string for "no data" indicator
+export function getNoDataColorCSS(): string {
+  return `rgba(${NO_HEIGHT_COLOR[0]}, ${NO_HEIGHT_COLOR[1]}, ${NO_HEIGHT_COLOR[2]}, ${NO_HEIGHT_COLOR[3] / 255})`;
+}
+
+// Get color for a specific height as CSS string
+export function getColorForHeightCSS(height: number): string {
+  const [r, g, b] = interpolateViridis(Math.min(height, MAX_HEIGHT) / MAX_HEIGHT);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
 export { VIRIDIS_COLORS, NO_HEIGHT_COLOR, MAX_HEIGHT };

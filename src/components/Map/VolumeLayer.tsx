@@ -39,6 +39,7 @@ export function createVolumeLayer(id: string = 'volume-layer') {
           boundingBox[1][0],
           boundingBox[1][1],
         ],
+        opacity: 0.5
       });
     },
   });

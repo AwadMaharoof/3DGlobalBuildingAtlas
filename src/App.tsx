@@ -7,6 +7,9 @@ import { DeckGLOverlay } from './components/Map/DeckGLOverlay';
 import { createBuildingLayer } from './components/Map/BuildingLayer';
 import { createVolumeLayer } from './components/Map/VolumeLayer';
 import { BuildingPopup } from './components/BuildingPopup';
+import { Legend } from './components/Legend/Legend';
+import { ZoomIndicator } from './components/ZoomIndicator/ZoomIndicator';
+import { BuildingStats } from './components/BuildingStats/BuildingStats';
 import { useWFSData } from './hooks/useWFSData';
 import type { BBox, BuildingFeature } from './types/building';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -108,19 +111,15 @@ function App() {
         />
       )}
 
-      {error ? (
-        <div className="status-overlay error">Error: {error.message}</div>
-      ) : loading ? (
-        <div className="status-overlay loading">Loading buildings...</div>
-      ) : showBuildings && data ? (
-        <div className="status-overlay info">
-          {data.features.length} buildings loaded
-        </div>
-      ) : !showBuildings ? (
-        <div className="status-overlay info">
-          Zoom in for 3D buildings (zoom {Math.round(zoom)}/{ZOOM_THRESHOLD})
-        </div>
-      ) : null}
+      <ZoomIndicator
+        zoom={zoom}
+        threshold={ZOOM_THRESHOLD}
+        loading={loading}
+        buildingCount={data?.features.length}
+        error={error}
+      />
+      {showBuildings && <Legend />}
+      {showBuildings && <BuildingStats data={data} loading={loading} />}
     </div>
   );
 }

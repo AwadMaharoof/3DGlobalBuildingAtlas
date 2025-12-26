@@ -1,0 +1,75 @@
+.zoom-indicator {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  padding: 10px 14px;
+  z-index: 1000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: border-color 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.zoom-indicator.detail {
+  border-left-color: rgb(253, 231, 37);
+}
+
+.zoom-indicator.overview {
+  border-left-color: rgb(68, 1, 84);
+}
+
+.zoom-indicator.error {
+  border-left-color: #e74c3c;
+}
+
+.zoom-indicator-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  width: 16px;
+  height: 16px;
+}
+
+.loading-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgb(253, 231, 37);
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.zoom-indicator-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.zoom-indicator-mode {
+  font-weight: 600;
+  color: #333;
+}
+
+.zoom-indicator-status {
+  font-size: 11px;
+  color: #666;
+}
+
+.zoom-indicator-status.error {
+  color: #e74c3c;
+}
