@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import type { BuildingCollection, BBox } from '../types/building';
 import { fetchBuildingData } from '../services/wfsService';
 
@@ -15,51 +16,45 @@ interface UseWFSDataResult {
   error: Error | null;
 }
 
+// Round bbox to ~100m grid for better cache hits
+function quantizeBbox(bbox: BBox): string {
+  const precision = 3; // ~100m at equator
+  return bbox.map(v => v.toFixed(precision)).join(',');
+}
+
 export function useWFSData(options: UseWFSDataOptions): UseWFSDataResult {
   const { typeName, bbox, debounceMs = 500, enabled = true } = options;
-  const [data, setData] = useState<BuildingCollection | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const [debouncedBbox, setDebouncedBbox] = useState<BBox | undefined>(bbox);
 
+  // Debounce bbox changes
   useEffect(() => {
-    if (!bbox || !enabled) return;
-
-    // Abort previous request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
+    if (!bbox) {
+      setDebouncedBbox(undefined);
+      return;
     }
 
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
-    const timeoutId = setTimeout(async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const geojson = await fetchBuildingData(typeName, bbox, controller.signal);
-        if (!controller.signal.aborted) {
-          setData(geojson);
-        }
-      } catch (err) {
-        if (!controller.signal.aborted) {
-          if (err instanceof Error && err.name !== 'AbortError') {
-            setError(err);
-          }
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
-      }
+    const timeoutId = setTimeout(() => {
+      setDebouncedBbox(bbox);
     }, debounceMs);
 
-    return () => {
-      clearTimeout(timeoutId);
-      controller.abort();
-    };
-  }, [typeName, bbox?.join(','), debounceMs, enabled]);
+    return () => clearTimeout(timeoutId);
+  }, [bbox?.join(','), debounceMs]);
 
-  return { data, loading, error };
+  const queryKey = debouncedBbox
+    ? ['wfs', typeName, quantizeBbox(debouncedBbox)]
+    : ['wfs', typeName, 'none'];
+
+  const { data, isFetching, error } = useQuery({
+    queryKey,
+    queryFn: ({ signal }) => fetchBuildingData(typeName, debouncedBbox, signal),
+    enabled: enabled && !!debouncedBbox,
+    staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
+  });
+
+  return {
+    data: data ?? null,
+    loading: isFetching,
+    error: error as Error | null,
+  };
 }
