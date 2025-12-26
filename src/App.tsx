@@ -23,7 +23,7 @@ const WFS_LAYER = 'global3D:lod1_global';
 function App() {
   const [bbox, setBbox] = useState<BBox | undefined>(undefined);
 
-  const updateBbox = useCallback((map: maplibregl.Map) => {
+  const updateBbox = useCallback((map: MapLibreMap) => {
     const bounds = map.getBounds();
     const newBbox: BBox = [
       bounds.getWest(),
@@ -63,17 +63,15 @@ function App() {
         <DeckGLOverlay layers={layers} />
       </Map>
 
-      {loading && (
-        <div className="status-overlay loading">Loading buildings...</div>
-      )}
-      {error && (
+      {error ? (
         <div className="status-overlay error">Error: {error.message}</div>
-      )}
-      {data && !loading && (
+      ) : loading ? (
+        <div className="status-overlay loading">Loading buildings...</div>
+      ) : data ? (
         <div className="status-overlay info">
           {data.features.length} buildings loaded
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

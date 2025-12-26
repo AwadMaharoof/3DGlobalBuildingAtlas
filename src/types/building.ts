@@ -6,7 +6,7 @@ export interface BuildingProperties {
   height: number;
   source?: string;
   region?: string;
-  var?: number;
+  variance?: number;
 }
 
 export type BuildingFeature = Feature<Polygon | MultiPolygon, BuildingProperties>;

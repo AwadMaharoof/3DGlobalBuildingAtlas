@@ -1,5 +1,5 @@
 import { GeoJsonLayer } from '@deck.gl/layers';
-import type { BuildingCollection } from '../../types/building';
+import type { BuildingCollection, BuildingFeature } from '../../types/building';
 
 const DEFAULT_HEIGHT = 10;
 
@@ -15,8 +15,8 @@ export function createBuildingLayer(
 
     // 3D Extrusion
     extruded: true,
-    getElevation: (feature: { properties?: { height?: number } }) =>
-      feature.properties?.height ?? DEFAULT_HEIGHT,
+    getElevation: (feature) =>
+      (feature as BuildingFeature).properties.height ?? DEFAULT_HEIGHT,
 
     // Fill color
     filled: true,
