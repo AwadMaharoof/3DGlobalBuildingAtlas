@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import { Map } from 'react-map-gl/maplibre';
+import { Map, AttributionControl } from 'react-map-gl/maplibre';
 import type { MapRef } from 'react-map-gl/maplibre';
 import type { ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import type { Map as MapLibreMap } from 'maplibre-gl';
@@ -149,8 +149,10 @@ function App() {
         mapStyle={BASEMAP_STYLES[basemapStyle]}
         onLoad={handleLoad}
         onMoveEnd={handleMoveEnd}
+        attributionControl={false}
       >
         <DeckGLOverlay layers={layers} onHover={handleHover} />
+        <AttributionControl customAttribution="Building data © GlobalBuildingAtlas (CC BY-NC 4.0)" />
       </Map>
 
       {hoverInfo && (
