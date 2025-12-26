@@ -1,6 +1,7 @@
 import { GeoJsonLayer } from '@deck.gl/layers';
 import type { BuildingCollection, BuildingFeature } from '../../types/building';
 import { getColorForHeight } from '../../utils/colorScale';
+import { filterBuildingsByHeight } from '../../utils/filterBuildings';
 
 const DEFAULT_HEIGHT = 10;
 
@@ -30,14 +31,8 @@ export function createBuildingLayer(
     ? [255, 255, 255, Math.round(255 * opacity)]
     : [0, 0, 0, Math.round(255 * opacity)];
 
-  // Client-side height filtering
-  const filteredData: BuildingCollection = {
-    ...data,
-    features: data.features.filter(feature => {
-      const height = feature.properties.height ?? 0;
-      return height >= heightRange[0] && height <= heightRange[1];
-    })
-  };
+  // Client-side height filtering using shared utility
+  const filteredData = filterBuildingsByHeight(data, heightRange);
 
   return new GeoJsonLayer({
     id,

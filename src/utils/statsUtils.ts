@@ -58,18 +58,33 @@ export function computeBuildingStats(data: BuildingCollection | null): HeightSta
     };
   }
 
-  const min = Math.min(...heights);
-  const max = Math.max(...heights);
-  const avg = heights.reduce((a, b) => a + b, 0) / heights.length;
+  // Single-pass computation for min, max, sum, and histogram
+  let min = Infinity;
+  let max = -Infinity;
+  let sum = 0;
+  const histogramCounts = new Array(HISTOGRAM_BINS.length).fill(0);
 
-  const histogram: HistogramBin[] = HISTOGRAM_BINS.map(bin => {
-    const count = heights.filter(h => h >= bin.min && h < bin.max).length;
-    return {
-      ...bin,
-      count,
-      percentage: (count / heights.length) * 100,
-    };
-  });
+  for (const h of heights) {
+    if (h < min) min = h;
+    if (h > max) max = h;
+    sum += h;
+
+    // Bucket into histogram bins
+    for (let i = 0; i < HISTOGRAM_BINS.length; i++) {
+      if (h >= HISTOGRAM_BINS[i].min && h < HISTOGRAM_BINS[i].max) {
+        histogramCounts[i]++;
+        break;
+      }
+    }
+  }
+
+  const avg = sum / heights.length;
+
+  const histogram: HistogramBin[] = HISTOGRAM_BINS.map((bin, i) => ({
+    ...bin,
+    count: histogramCounts[i],
+    percentage: (histogramCounts[i] / heights.length) * 100,
+  }));
 
   return {
     count: data.features.length,

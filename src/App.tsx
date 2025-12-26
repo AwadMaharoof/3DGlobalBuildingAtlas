@@ -13,6 +13,7 @@ import { ZoomIndicator } from './components/ZoomIndicator/ZoomIndicator';
 import { BuildingStats } from './components/BuildingStats/BuildingStats';
 import { LayerPanel } from './components/LayerPanel/LayerPanel';
 import { useWFSData } from './hooks/useWFSData';
+import { countBuildingsInHeightRange } from './utils/filterBuildings';
 import type { BBox, BuildingFeature } from './types/building';
 import type { BasemapStyle } from './types/layerControls';
 import { BASEMAP_STYLES } from './types/layerControls';
@@ -100,13 +101,10 @@ function App() {
     enabled: showBuildings
   });
 
-  // Calculate filtered count for display
+  // Calculate filtered count for display (using efficient counting without array allocation)
   const filteredCount = useMemo(() => {
     if (!data) return 0;
-    return data.features.filter(f => {
-      const h = f.properties.height ?? 0;
-      return h >= heightRange[0] && h <= heightRange[1];
-    }).length;
+    return countBuildingsInHeightRange(data.features, heightRange);
   }, [data, heightRange]);
 
   const layers = useMemo(() => {
