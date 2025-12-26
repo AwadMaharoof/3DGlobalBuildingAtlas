@@ -6,6 +6,7 @@ interface UseWFSDataOptions {
   typeName: string;
   bbox?: BBox;
   debounceMs?: number;
+  enabled?: boolean;
 }
 
 interface UseWFSDataResult {
@@ -15,14 +16,14 @@ interface UseWFSDataResult {
 }
 
 export function useWFSData(options: UseWFSDataOptions): UseWFSDataResult {
-  const { typeName, bbox, debounceMs = 500 } = options;
+  const { typeName, bbox, debounceMs = 500, enabled = true } = options;
   const [data, setData] = useState<BuildingCollection | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    if (!bbox) return;
+    if (!bbox || !enabled) return;
 
     // Abort previous request
     if (abortControllerRef.current) {
@@ -58,7 +59,7 @@ export function useWFSData(options: UseWFSDataOptions): UseWFSDataResult {
       clearTimeout(timeoutId);
       controller.abort();
     };
-  }, [typeName, bbox?.join(','), debounceMs]);
+  }, [typeName, bbox?.join(','), debounceMs, enabled]);
 
   return { data, loading, error };
 }

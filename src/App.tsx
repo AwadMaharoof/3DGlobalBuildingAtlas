@@ -2,10 +2,13 @@ import { useState, useCallback, useMemo } from 'react';
 import { Map } from 'react-map-gl/maplibre';
 import type { ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import type { Map as MapLibreMap } from 'maplibre-gl';
+import type { PickingInfo } from '@deck.gl/core';
 import { DeckGLOverlay } from './components/Map/DeckGLOverlay';
 import { createBuildingLayer } from './components/Map/BuildingLayer';
+import { createVolumeLayer } from './components/Map/VolumeLayer';
+import { BuildingPopup } from './components/BuildingPopup';
 import { useWFSData } from './hooks/useWFSData';
-import type { BBox } from './types/building';
+import type { BBox, BuildingFeature } from './types/building';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './App.css';
 
@@ -19,11 +22,20 @@ const INITIAL_VIEW_STATE = {
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 const WFS_LAYER = 'global3D:lod1_global';
+const ZOOM_THRESHOLD = 13;
+
+interface PopupInfo {
+  feature: BuildingFeature;
+  x: number;
+  y: number;
+}
 
 function App() {
   const [bbox, setBbox] = useState<BBox | undefined>(undefined);
+  const [zoom, setZoom] = useState(INITIAL_VIEW_STATE.zoom);
+  const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
 
-  const updateBbox = useCallback((map: MapLibreMap) => {
+  const updateViewState = useCallback((map: MapLibreMap) => {
     const bounds = map.getBounds();
     const newBbox: BBox = [
       bounds.getWest(),
@@ -32,25 +44,49 @@ function App() {
       bounds.getNorth()
     ];
     setBbox(newBbox);
+    setZoom(map.getZoom());
   }, []);
 
   const handleLoad = useCallback((evt: { target: MapLibreMap }) => {
-    updateBbox(evt.target);
-  }, [updateBbox]);
+    updateViewState(evt.target);
+  }, [updateViewState]);
 
   const handleMoveEnd = useCallback((evt: ViewStateChangeEvent) => {
-    updateBbox(evt.target);
-  }, [updateBbox]);
+    updateViewState(evt.target);
+  }, [updateViewState]);
+
+  const handleClick = useCallback((info: PickingInfo) => {
+    if (info.object && info.x !== undefined && info.y !== undefined) {
+      setPopupInfo({
+        feature: info.object as BuildingFeature,
+        x: info.x,
+        y: info.y,
+      });
+    } else {
+      setPopupInfo(null);
+    }
+  }, []);
+
+  const handleClosePopup = useCallback(() => {
+    setPopupInfo(null);
+  }, []);
+
+  const showBuildings = zoom >= ZOOM_THRESHOLD;
 
   const { data, loading, error } = useWFSData({
     typeName: WFS_LAYER,
-    bbox
+    bbox,
+    enabled: showBuildings
   });
 
   const layers = useMemo(() => {
-    const layer = createBuildingLayer(data);
-    return layer ? [layer] : [];
-  }, [data]);
+    if (showBuildings) {
+      const layer = createBuildingLayer(data);
+      return layer ? [layer] : [];
+    } else {
+      return [createVolumeLayer()];
+    }
+  }, [data, showBuildings]);
 
   return (
     <div id="map-container">
@@ -60,16 +96,29 @@ function App() {
         onLoad={handleLoad}
         onMoveEnd={handleMoveEnd}
       >
-        <DeckGLOverlay layers={layers} />
+        <DeckGLOverlay layers={layers} onClick={handleClick} />
       </Map>
+
+      {popupInfo && (
+        <BuildingPopup
+          feature={popupInfo.feature}
+          x={popupInfo.x}
+          y={popupInfo.y}
+          onClose={handleClosePopup}
+        />
+      )}
 
       {error ? (
         <div className="status-overlay error">Error: {error.message}</div>
       ) : loading ? (
         <div className="status-overlay loading">Loading buildings...</div>
-      ) : data ? (
+      ) : showBuildings && data ? (
         <div className="status-overlay info">
           {data.features.length} buildings loaded
+        </div>
+      ) : !showBuildings ? (
+        <div className="status-overlay info">
+          Zoom in for 3D buildings (zoom {Math.round(zoom)}/{ZOOM_THRESHOLD})
         </div>
       ) : null}
     </div>

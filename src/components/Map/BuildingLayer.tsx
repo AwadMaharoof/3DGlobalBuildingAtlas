@@ -1,5 +1,6 @@
 import { GeoJsonLayer } from '@deck.gl/layers';
 import type { BuildingCollection, BuildingFeature } from '../../types/building';
+import { getColorForHeight } from '../../utils/colorScale';
 
 const DEFAULT_HEIGHT = 10;
 
@@ -18,9 +19,12 @@ export function createBuildingLayer(
     getElevation: (feature) =>
       (feature as BuildingFeature).properties.height ?? DEFAULT_HEIGHT,
 
-    // Fill color
+    // Fill color - Viridis scale based on height
     filled: true,
-    getFillColor: [74, 140, 200, 200],
+    getFillColor: (feature) => {
+      const height = (feature as BuildingFeature).properties.height;
+      return getColorForHeight(height);
+    },
 
     // Wireframe for edges
     wireframe: true,
@@ -38,6 +42,11 @@ export function createBuildingLayer(
     // Interactivity
     pickable: true,
     autoHighlight: true,
-    highlightColor: [255, 200, 0, 180]
+    highlightColor: [255, 200, 0, 180],
+
+    // Enable color transitions
+    updateTriggers: {
+      getFillColor: [data]
+    }
   });
 }
