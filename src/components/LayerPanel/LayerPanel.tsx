@@ -16,6 +16,7 @@ interface LayerPanelProps {
   onBasemapChange: (style: BasemapStyle) => void;
   filteredCount: number;
   totalCount: number;
+  onResetView: () => void;
 }
 
 export function LayerPanel({
@@ -28,7 +29,8 @@ export function LayerPanel({
   basemap,
   onBasemapChange,
   filteredCount,
-  totalCount
+  totalCount,
+  onResetView
 }: LayerPanelProps) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -99,7 +101,7 @@ export function LayerPanel({
         </div>
       </div>
 
-      <div className="layer-panel-section layer-panel-section-last">
+      <div className="layer-panel-section">
         <div className="layer-panel-section-label">Basemap</div>
         <div className="basemap-buttons">
           <button
@@ -115,6 +117,15 @@ export function LayerPanel({
             Dark
           </button>
         </div>
+      </div>
+
+      <div className="layer-panel-section layer-panel-section-last">
+        <button className="reset-view-btn" onClick={onResetView}>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <polygon points="12,2 20,20 12,16 4,20" />
+          </svg>
+          Reset North
+        </button>
       </div>
     </div>
   );

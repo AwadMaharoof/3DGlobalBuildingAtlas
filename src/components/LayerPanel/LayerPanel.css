@@ -147,3 +147,25 @@
 .layer-panel .range-slider-track {
   background: var(--widget-track-bg);
 }
+
+.reset-view-btn {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--widget-border-dark);
+  background: var(--widget-bg-secondary);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: var(--widget-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.reset-view-btn:hover {
+  background: var(--widget-border);
+  border-color: var(--widget-border-dark);
+  color: var(--widget-text);
+}

@@ -1,5 +1,6 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { Map } from 'react-map-gl/maplibre';
+import type { MapRef } from 'react-map-gl/maplibre';
 import type { ViewStateChangeEvent } from 'react-map-gl/maplibre';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import type { PickingInfo } from '@deck.gl/core';
@@ -36,6 +37,7 @@ interface PopupInfo {
 }
 
 function App() {
+  const mapRef = useRef<MapRef>(null);
   const [bbox, setBbox] = useState<BBox | undefined>(undefined);
   const [zoom, setZoom] = useState(INITIAL_VIEW_STATE.zoom);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
@@ -82,6 +84,14 @@ function App() {
     setPopupInfo(null);
   }, []);
 
+  const handleResetView = useCallback(() => {
+    mapRef.current?.easeTo({
+      bearing: 0,
+      pitch: 0,
+      duration: 500
+    });
+  }, []);
+
   const showBuildings = zoom >= ZOOM_THRESHOLD;
 
   const { data, loading, error } = useWFSData({
@@ -115,6 +125,7 @@ function App() {
   return (
     <div id="map-container" className={basemapStyle === 'dark' ? 'dark-theme' : ''}>
       <Map
+        ref={mapRef}
         initialViewState={INITIAL_VIEW_STATE}
         mapStyle={BASEMAP_STYLES[basemapStyle]}
         onLoad={handleLoad}
@@ -152,6 +163,7 @@ function App() {
           onBasemapChange={setBasemapStyle}
           filteredCount={filteredCount}
           totalCount={data?.features.length ?? 0}
+          onResetView={handleResetView}
         />
       )}
 
