@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { Map } from 'react-map-gl/maplibre';
 import type { MapRef } from 'react-map-gl/maplibre';
 import type { ViewStateChangeEvent } from 'react-map-gl/maplibre';
@@ -31,17 +31,30 @@ const INITIAL_VIEW_STATE = {
 const WFS_LAYER = 'global3D:lod1_global';
 const ZOOM_THRESHOLD = 13;
 
-interface PopupInfo {
+interface HoverInfo {
   feature: BuildingFeature;
   x: number;
   y: number;
 }
 
+const HOVER_DELAY_MS = 250;
+
 function App() {
   const mapRef = useRef<MapRef>(null);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup hover timer on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) {
+        clearTimeout(hoverTimerRef.current);
+      }
+    };
+  }, []);
+
   const [bbox, setBbox] = useState<BBox | undefined>(undefined);
   const [zoom, setZoom] = useState(INITIAL_VIEW_STATE.zoom);
-  const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+  const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
 
   // Layer control state
   const [wireframeMode, setWireframeMode] = useState(false);
@@ -69,20 +82,26 @@ function App() {
     updateViewState(evt.target);
   }, [updateViewState]);
 
-  const handleClick = useCallback((info: PickingInfo) => {
-    if (info.object && info.x !== undefined && info.y !== undefined) {
-      setPopupInfo({
-        feature: info.object as BuildingFeature,
-        x: info.x,
-        y: info.y,
-      });
-    } else {
-      setPopupInfo(null);
+  const handleHover = useCallback((info: PickingInfo) => {
+    // Clear any pending hover timer
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
     }
-  }, []);
 
-  const handleClosePopup = useCallback(() => {
-    setPopupInfo(null);
+    if (info.object && info.x !== undefined && info.y !== undefined) {
+      // Set a delay before showing the tooltip
+      hoverTimerRef.current = setTimeout(() => {
+        setHoverInfo({
+          feature: info.object as BuildingFeature,
+          x: info.x!,
+          y: info.y!,
+        });
+      }, HOVER_DELAY_MS);
+    } else {
+      // Immediately hide when not hovering over a building
+      setHoverInfo(null);
+    }
   }, []);
 
   const handleResetView = useCallback(() => {
@@ -129,15 +148,14 @@ function App() {
         onLoad={handleLoad}
         onMoveEnd={handleMoveEnd}
       >
-        <DeckGLOverlay layers={layers} onClick={handleClick} />
+        <DeckGLOverlay layers={layers} onHover={handleHover} />
       </Map>
 
-      {popupInfo && (
+      {hoverInfo && (
         <BuildingPopup
-          feature={popupInfo.feature}
-          x={popupInfo.x}
-          y={popupInfo.y}
-          onClose={handleClosePopup}
+          feature={hoverInfo.feature}
+          x={hoverInfo.x}
+          y={hoverInfo.y}
         />
       )}
 

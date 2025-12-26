@@ -3,13 +3,14 @@
   background: var(--widget-bg);
   border-radius: 8px;
   box-shadow: var(--widget-shadow);
-  min-width: 220px;
-  max-width: 300px;
+  padding: 10px 12px;
+  min-width: 180px;
+  max-width: 280px;
   z-index: 1000;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 13px;
   transform: translate(-50%, -100%) translateY(-12px);
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .building-popup::after {
@@ -23,53 +24,13 @@
   border-top: 8px solid var(--widget-bg);
 }
 
-.building-popup-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--widget-border);
-  background: var(--widget-bg-secondary);
-  border-radius: 8px 8px 0 0;
-}
-
-.building-popup-title {
-  font-weight: 600;
-  color: var(--widget-text);
-}
-
-.building-popup-close {
-  background: none;
-  border: none;
-  font-size: 18px;
-  color: var(--widget-text-secondary);
-  cursor: pointer;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: background-color 0.15s;
-}
-
-.building-popup-close:hover {
-  background-color: var(--widget-border);
-  color: var(--widget-text);
-}
-
-.building-popup-content {
-  padding: 8px 12px 12px;
-}
-
 .building-popup-table {
   width: 100%;
   border-collapse: collapse;
 }
 
 .building-popup-table tr:not(:last-child) td {
-  padding-bottom: 6px;
+  padding-bottom: 5px;
 }
 
 .building-popup-label {
