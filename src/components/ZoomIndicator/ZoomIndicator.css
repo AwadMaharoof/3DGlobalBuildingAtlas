@@ -2,9 +2,9 @@
   position: absolute;
   top: 20px;
   left: 20px;
-  background: white;
+  background: var(--widget-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--widget-shadow);
   padding: 10px 14px;
   z-index: 1000;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -32,7 +32,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #555;
+  color: var(--widget-text-secondary);
   width: 16px;
   height: 16px;
 }
@@ -62,12 +62,12 @@
 
 .zoom-indicator-mode {
   font-weight: 600;
-  color: #333;
+  color: var(--widget-text);
 }
 
 .zoom-indicator-status {
   font-size: 11px;
-  color: #666;
+  color: var(--widget-text-secondary);
 }
 
 .zoom-indicator-status.error {

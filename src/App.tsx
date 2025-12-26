@@ -113,7 +113,7 @@ function App() {
   }, [data, showBuildings, wireframeMode, buildingOpacity, heightRange, basemapStyle]);
 
   return (
-    <div id="map-container">
+    <div id="map-container" className={basemapStyle === 'dark' ? 'dark-theme' : ''}>
       <Map
         initialViewState={INITIAL_VIEW_STATE}
         mapStyle={BASEMAP_STYLES[basemapStyle]}

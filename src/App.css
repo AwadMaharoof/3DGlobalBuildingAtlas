@@ -1,7 +1,33 @@
+/* Theme CSS variables */
 #map-container {
+  /* Light theme (default) */
+  --widget-bg: white;
+  --widget-bg-secondary: #f8f9fa;
+  --widget-text: #333;
+  --widget-text-secondary: #666;
+  --widget-text-muted: #999;
+  --widget-border: #eee;
+  --widget-border-dark: #ddd;
+  --widget-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  --widget-track-bg: #e0e0e0;
+  --widget-toggle-bg: #ccc;
+
   width: 100vw;
   height: 100vh;
   position: relative;
+}
+
+#map-container.dark-theme {
+  --widget-bg: #1f1f24;
+  --widget-bg-secondary: #2b2b3a;
+  --widget-text: #e0e0e0;
+  --widget-text-secondary: #a0a0a0;
+  --widget-text-muted: #666;
+  --widget-border: #333;
+  --widget-border-dark: #444;
+  --widget-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  --widget-track-bg: #444;
+  --widget-toggle-bg: #444;
 }
 
 .status-overlay {
@@ -37,8 +63,8 @@
   bottom: 12px;
   left: 12px;
   z-index: 1000;
-  color: #333;
-  background: rgba(255, 255, 255, 0.9);
+  color: var(--widget-text);
+  background: var(--widget-bg);
   padding: 8px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -49,6 +75,6 @@
 }
 
 .github-link:hover {
-  background: #333;
-  color: #fff;
+  background: var(--widget-text);
+  color: var(--widget-bg);
 }

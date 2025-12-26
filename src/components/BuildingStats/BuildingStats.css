@@ -2,27 +2,27 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  background: white;
+  background: var(--widget-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--widget-shadow);
   padding: 14px 16px;
   min-width: 200px;
   max-width: 260px;
   z-index: 1000;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 13px;
-  color: #333;
+  color: var(--widget-text);
 }
 
 .building-stats-title {
   font-weight: 600;
   margin-bottom: 10px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--widget-border);
 }
 
 .building-stats-loading {
-  color: #666;
+  color: var(--widget-text-secondary);
   font-style: italic;
 }
 
@@ -30,7 +30,7 @@
 .building-stats-heights {
   margin-bottom: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--widget-border);
 }
 
 .building-stats-row {
@@ -41,7 +41,7 @@
 }
 
 .building-stats-label {
-  color: #666;
+  color: var(--widget-text-secondary);
   font-size: 12px;
 }
 
@@ -51,7 +51,7 @@
 }
 
 .building-stats-value.muted {
-  color: #999;
+  color: var(--widget-text-muted);
 }
 
 .building-stats-histogram {
@@ -60,7 +60,7 @@
 
 .building-stats-histogram-title {
   font-size: 11px;
-  color: #666;
+  color: var(--widget-text-secondary);
   margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -75,7 +75,7 @@
 
 .histogram-label {
   font-size: 11px;
-  color: #666;
+  color: var(--widget-text-secondary);
   width: 55px;
   flex-shrink: 0;
 }
@@ -83,7 +83,7 @@
 .histogram-bar-container {
   flex: 1;
   height: 12px;
-  background: #f0f0f0;
+  background: var(--widget-track-bg);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -97,7 +97,7 @@
 
 .histogram-count {
   font-size: 11px;
-  color: #666;
+  color: var(--widget-text-secondary);
   width: 32px;
   text-align: right;
   flex-shrink: 0;
