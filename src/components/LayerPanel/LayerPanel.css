@@ -1,6 +1,6 @@
 .layer-panel {
   position: absolute;
-  top: 80px;
+  top: 20px;
   left: 20px;
   background: var(--widget-bg);
   border-radius: 8px;
@@ -8,6 +8,8 @@
   padding: 0;
   min-width: 220px;
   max-width: 260px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
   z-index: 1000;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 13px;
@@ -16,7 +18,7 @@
 
 .layer-panel-collapsed {
   position: absolute;
-  top: 80px;
+  top: 20px;
   left: 20px;
   width: 40px;
   height: 40px;
@@ -74,10 +76,6 @@
   border-bottom: 1px solid var(--widget-border);
 }
 
-.layer-panel-section-last {
-  border-bottom: none;
-}
-
 .layer-panel-section-label {
   font-size: 12px;
   color: var(--widget-text);
@@ -91,38 +89,47 @@
   text-align: right;
 }
 
-.basemap-buttons {
+/* Toolbar */
+.layer-panel-toolbar {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 14px;
 }
 
-.basemap-btn {
-  flex: 1;
-  padding: 8px 12px;
+.toolbar-icon-btn {
+  width: 32px;
+  height: 32px;
   border: 1px solid var(--widget-border-dark);
   background: var(--widget-bg-secondary);
   border-radius: 6px;
-  font-size: 12px;
   cursor: pointer;
   transition: all 0.15s ease;
   color: var(--widget-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.basemap-btn:hover {
+.toolbar-icon-btn:hover {
   background: var(--widget-border);
   border-color: var(--widget-border-dark);
+  color: var(--widget-text);
 }
 
-.basemap-btn-active {
+.toolbar-icon-btn-active {
   background: rgb(49, 104, 142);
   border-color: rgb(49, 104, 142);
   color: white;
 }
 
-.basemap-btn-active:hover {
+.toolbar-icon-btn-active:hover {
   background: rgb(39, 84, 122);
   border-color: rgb(39, 84, 122);
+  color: white;
 }
+
 
 .color-mode-buttons {
   display: grid;
@@ -182,24 +189,3 @@
   background: var(--widget-track-bg);
 }
 
-.reset-view-btn {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--widget-border-dark);
-  background: var(--widget-bg-secondary);
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  color: var(--widget-text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.reset-view-btn:hover {
-  background: var(--widget-border);
-  border-color: var(--widget-border-dark);
-  color: var(--widget-text);
-}

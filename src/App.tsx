@@ -9,7 +9,6 @@ import { createBuildingLayer } from './components/Map/BuildingLayer';
 import { createVolumeLayer } from './components/Map/VolumeLayer';
 import { BuildingPopup } from './components/BuildingPopup';
 import { Legend } from './components/Legend/Legend';
-import { ZoomIndicator } from './components/ZoomIndicator/ZoomIndicator';
 import { BuildingStats } from './components/BuildingStats/BuildingStats';
 import { LayerPanel } from './components/LayerPanel/LayerPanel';
 import { useWFSData } from './hooks/useWFSData';
@@ -163,11 +162,11 @@ function App() {
         />
       )}
 
-      <ZoomIndicator
+      <BuildingStats
+        data={data}
+        loading={loading}
         zoom={zoom}
         threshold={ZOOM_THRESHOLD}
-        loading={loading}
-        buildingCount={data?.features.length}
         error={error}
       />
 
@@ -190,7 +189,6 @@ function App() {
       )}
 
       {showBuildings && <Legend colorMode={colorMode} />}
-      {showBuildings && <BuildingStats data={data} loading={loading} />}
 
       <a
         href="https://github.com/AwadMaharoof/3DGlobalBuildingAtlas"
